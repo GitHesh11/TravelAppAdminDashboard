@@ -45,93 +45,18 @@ const SideNavbar = () => {
       //   </ListSubheader>
       // }
     >
-      <ListItemButton onClick={() => navigate(`/dashboard`)}>
+      <ListItemButton onClick={() => navigate(`/`)}>
         <ListItemIcon>
           <HomeIcon style={{ color: "#1976d2" }} />
         </ListItemIcon>
         <ListItemText primary="Home" />
       </ListItemButton>
-      <ListItemButton onClick={() => navigate(`/new-item-rental`)}>
+      <ListItemButton onClick={() => navigate(`/agent-register`)}>
         <ListItemIcon>
           <PersonAddIcon style={{ color: "#1976d2" }} />
         </ListItemIcon>
         <ListItemText primary="Add New Agent" />
       </ListItemButton>
-      {/* <ListItemButton onClick={() => navigate(`/new-item-rental`)}>
-        <ListItemIcon>
-          <AddIcon style={{ color: "#1976d2" }} />
-        </ListItemIcon>
-        <ListItemText primary="Product Rentals" />
-      </ListItemButton>
-
-      <ListItemButton>
-        <ListItemIcon>
-          <BusinessIcon style={{ color: "#1976d2" }} />
-        </ListItemIcon>
-        <ListItemText primary="Studio Rentals" />
-      </ListItemButton>
-      <ListItemButton onClick={() => navigate(`/item-list`)}>
-        <ListItemIcon>
-          <InventoryIcon style={{ color: "#1976d2" }} />
-        </ListItemIcon>
-        <ListItemText primary="Inventory" />
-      </ListItemButton>
-      <ListItemButton onClick={() => navigate(`/customer-list`)}>
-        <ListItemIcon>
-          <GroupsIcon style={{ color: "#1976d2" }} />
-        </ListItemIcon>
-        <ListItemText primary="Customers" />
-      </ListItemButton>
-        <ListItemButton onClick={() => navigate(`/user-list`)}>
-          <ListItemIcon>
-            <PeopleIcon style={{ color: "#1976d2" }} />
-          </ListItemIcon>
-          <ListItemText primary="Users" />
-        </ListItemButton>
-
-      <ListItemButton>
-        <ListItemIcon>
-          <ReceiptIcon style={{ color: "#1976d2" }} />
-        </ListItemIcon>
-        <ListItemText primary="Damage Charge" />
-      </ListItemButton>
-        <ListItemButton>
-          <ListItemIcon>
-            <BuildIcon style={{ color: "#1976d2" }} />
-          </ListItemIcon>
-          <ListItemText primary="Maintanence" />
-        </ListItemButton> */}
-      <>
-        {/* <ListItemButton onClick={handleClick}>
-          <ListItemIcon>
-            <GroupsIcon style={{ color: "#1976d2" }} />
-          </ListItemIcon>
-          <ListItemText primary="Agents" />
-          {open ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton>
-        <Collapse in={open} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => navigate(`/stock-report`)}
-            >
-              <ListItemIcon>
-                <ArrowRightIcon fontSize="large" style={{ color: "#1976d2" }} />
-              </ListItemIcon>
-              <ListItemText primary="Add New Agent" />
-            </ListItemButton>
-            <ListItemButton
-              sx={{ pl: 4 }}
-              onClick={() => navigate(`/rental-report`)}
-            >
-              <ListItemIcon>
-                <ArrowRightIcon fontSize="large" style={{ color: "#1976d2" }} />
-              </ListItemIcon>
-              <ListItemText primary="Manage Agent" />
-            </ListItemButton>
-          </List>
-        </Collapse> */}
-      </>
     </List>
   );
 };

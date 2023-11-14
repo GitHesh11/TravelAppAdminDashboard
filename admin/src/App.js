@@ -13,7 +13,7 @@ function App() {
           <Route element={<Container />}>
             <Route index element={<Dashboard />} />
             <Route path="agent-register" element={<AgentRegister />} />
-            <Route path="agent-edit" element={<AgentEdit/>} />
+            <Route path="agent-edit/:id" element={<AgentEdit/>} />
           </Route>
         </Routes>
       </BrowserRouter>

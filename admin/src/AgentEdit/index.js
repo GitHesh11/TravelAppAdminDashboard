@@ -1,17 +1,45 @@
 import React from "react";
+import axios from "axios";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Alert from "@mui/material/Alert";
+import Snackbar from "@mui/material/Snackbar";
 
 const AgentRegister = () => {
+  const params = useParams();
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
-    nic: "",
-    contactNumber1: "",
-    contactNumber2: "",
-    address: "",
+    email: "",
+    newPassword: "",
+    confirm_newPassword: "",
   });
+  const { name, email, newPassword, confirm_newPassword } = formData;
 
-  const { name, nic, contactNumber1, contactNumber2, address } = formData;
+  const [isPasswordsMatch, setIsPasswordsMatch] = useState(true);
+  const [isAgentDataUpdated, setIsAgentDataUpdated] = useState(false);
+  const [isPasswordReset, setIsPasswordReset] = useState(false);
+
+  useEffect(() => {
+    if (params.id) {
+      getAgentById(params.id);
+    }
+  }, []);
+
+  const getAgentById = async (id) => {
+    const res = await axios.get(`http://localhost:5000/api/user/${id}`);
+    console.log(res);
+    if (res.status === 200) {
+      setFormData({
+        ...formData,
+        id: res.data._id,
+        name: res.data.name,
+        email: res.data.email,
+      });
+    }
+  };
 
   const onChange = (e) => {
     setFormData({
@@ -20,138 +48,191 @@ const AgentRegister = () => {
     });
   };
 
-  const onSubmit = (e) => {
+  const onSubmitUpdate = (e) => {
     e.preventDefault();
+    updateAgent();
+  };
+
+  const updateAgent = async () => {
+    const res = await axios.put(
+      `http://localhost:5000/api/user/update/${formData.id}`,
+      { name: formData.name, email: formData.email }
+    );
+    console.log(res);
+    if (res.status === 200) {
+      setIsAgentDataUpdated(true);
+    }
+  };
+
+  const onSubmitResetPassword = (e) => {
+    e.preventDefault();
+    if (formData.newPassword !== formData.confirm_newPassword) {
+      setIsPasswordsMatch(false);
+    } else {
+      setIsPasswordsMatch(true);
+      resetPassword();
+    }
+  };
+
+  const resetPassword = async () => {
+    const res = await axios.put(
+      `http://localhost:5000/api/user/resetPassword/${formData.id}`,
+      { password: formData.newPassword }
+    );
+    console.log(res);
+    if (res.status === 200) {
+      setIsPasswordReset(true);
+      setFormData({
+        ...formData,
+        newPassword: "",
+        confirm_newPassword: "",
+      });
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setIsPasswordsMatch(true);
+    setIsAgentDataUpdated(false);
+    setIsPasswordReset(false);
   };
 
   return (
     <>
-
-
-    <div className="card">
-      <div className="card-body">
-        <h5 className="card-title mb-4">
-          <b>Bhagya Travels</b>
-        </h5>
-        <form onSubmit={(e) => onSubmit(e)}>
-          <div className="row">
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Agency Name <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="name"
-                value="Bhagya Travels"
-                required
-                onChange={(e) => onChange(e)}
-              />
+      <div className="card">
+        <div className="card-body">
+          {!isPasswordsMatch && (
+            <>
+              <Snackbar
+                open={!isPasswordsMatch}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="error"
+                  sx={{ width: "100%" }}
+                >
+                  Passwords does not match
+                </Alert>
+              </Snackbar>
+            </>
+          )}
+          {isAgentDataUpdated && (
+            <>
+              <Snackbar
+                open={isAgentDataUpdated}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Agent succesfully updated
+                </Alert>
+              </Snackbar>
+            </>
+          )}
+          {isPasswordReset && (
+            <>
+              <Snackbar
+                open={isPasswordReset}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity="success"
+                  sx={{ width: "100%" }}
+                >
+                  Password reset successfull
+                </Alert>
+              </Snackbar>
+            </>
+          )}
+          <h5 className="card-title mb-4">
+            <b>Bhagya Travels</b>
+          </h5>
+          <form onSubmit={(e) => onSubmitUpdate(e)}>
+            <div className="row">
+              <div className="col-lg-6 mb-3 ">
+                <TextField
+                  required
+                  fullWidth
+                  id="outlined-required"
+                  label="Agency Name"
+                  name="name"
+                  value={name}
+                  onChange={(e) => onChange(e)}
+                />
+              </div>
+              <div className="col-lg-6 mb-3 ">
+                <TextField
+                  required
+                  fullWidth
+                  id="outlined-required"
+                  label="Email"
+                  name="email"
+                  value={email}
+                  onChange={(e) => onChange(e)}
+                />
+              </div>
             </div>
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Agent User Name <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="name"
-                value="Bhagya756"
-                required
-                onChange={(e) => onChange(e)}
-              />
+            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              <Button variant="contained" type="sumbit">
+                Update
+              </Button>
             </div>
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Contact Number 1 <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="number"
-                className="form-control"
-                name="contactNumber1"
-                value="0765423154"
-                required
-                onChange={(e) => onChange(e)}
-              />
-            </div>
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Contact Number 2
-              </label>
-              <input
-                type="number"
-                className="form-control"
-                name="contactNumber2"
-                value="0762147996"
-                onChange={(e) => onChange(e)}
-              />
-            </div>
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Address <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                name="address"
-                value="Colombo 03"
-                required
-                onChange={(e) => onChange(e)}
-              />
-            </div>
-            
-          </div>
-          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button className="btn btn-primary me-md-2" type="submit">
-              Save
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
-    <div className="card mt-3">
-      <div className="card-body">
-        <h5 className="card-title mb-4">
-          <b>Password Reset</b>
-        </h5>
-        <form onSubmit={(e) => onSubmit(e)}>
-          <div className="row">
-            
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                New Password <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                name="address"
-                value={address}
-                required
-                onChange={(e) => onChange(e)}
-              />
+      <div className="card mt-3">
+        <div className="card-body">
+          <h5 className="card-title mb-4">
+            <b>Password Reset</b>
+          </h5>
+          <form onSubmit={(e) => onSubmitResetPassword(e)}>
+            <div className="row">
+              <div className="col-lg-6 mb-3 ">
+                <TextField
+                  required
+                  fullWidth
+                  id="outlined-required"
+                  label="New Password"
+                  type="password"
+                  name="newPassword"
+                  value={newPassword}
+                  onChange={(e) => onChange(e)}
+                />
+              </div>
+              <div className="col-lg-6 mb-3 ">
+                <TextField
+                  required
+                  fullWidth
+                  id="outlined-required"
+                  label="Re-Enter New Password"
+                  type="password"
+                  name="confirm_newPassword"
+                  value={confirm_newPassword}
+                  onChange={(e) => onChange(e)}
+                />
+              </div>
             </div>
-            <div className="col-lg-4 mb-3 ">
-              <label for="name" className="form-label">
-                Re-enter New Password <span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                name="address"
-                value={address}
-                required
-                onChange={(e) => onChange(e)}
-              />
+            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              <Button variant="contained" color="error" type="sumbit">
+                Reset password
+              </Button>
             </div>
-          </div>
-          <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-            <button className="btn btn-danger me-md-2" type="submit">
-              Reset Password
-            </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
     </>
   );
 };
